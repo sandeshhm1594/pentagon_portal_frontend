@@ -610,7 +610,7 @@ const TrainerDashboard = () => {
             <p className="text-body-text mb-4">Scan student QR code to mark attendance</p>
             <div className="bg-light-blue p-8 rounded-xl text-center mb-4">
               <div className="relative w-full max-w-md mx-auto h-80">
-                <div id="trainer-reader" className="absolute inset-0"></div>
+                <div id="trainer-reader" className="absolute inset-0 pointer-events-none"></div>
                 {!cameraActive && (
                 <>
                   <QrCode className="w-24 h-24 mx-auto text-primary mb-4" />
