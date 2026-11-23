@@ -293,9 +293,10 @@ const TrainerDashboard = () => {
       try {
         await html5QrCodeRef.current.stop()
         html5QrCodeRef.current.clear()
-        setCameraActive(false)
       } catch (error) {
         console.error('Error stopping camera:', error)
+      } finally {
+        setCameraActive(false)
       }
     }
   }
@@ -608,8 +609,9 @@ const TrainerDashboard = () => {
             <h2 className="text-2xl font-bold text-heading mb-4">Scan QR Code</h2>
             <p className="text-body-text mb-4">Scan student QR code to mark attendance</p>
             <div className="bg-light-blue p-8 rounded-xl text-center mb-4">
-              <div id="trainer-reader" className={`w-full max-w-md mx-auto ${!cameraActive ? 'hidden' : ''}`}></div>
-              {!cameraActive ? (
+              <div className="relative w-full max-w-md mx-auto h-80">
+                <div id="trainer-reader" className="absolute inset-0"></div>
+                {!cameraActive && (
                 <>
                   <QrCode className="w-24 h-24 mx-auto text-primary mb-4" />
                   <p className="text-body-text mb-2 font-medium">QR Scanner</p>
@@ -639,7 +641,9 @@ const TrainerDashboard = () => {
                     </button>
                   </form>
                 </>
-              ) : (
+                )}
+              </div>
+              {cameraActive && (
                 <button
                   onClick={stopCamera}
                   className="btn-secondary flex items-center gap-2 mx-auto mt-4"
