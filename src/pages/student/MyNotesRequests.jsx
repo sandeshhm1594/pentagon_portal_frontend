@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { Clock, CheckCircle, XCircle, Menu, X, FileText } from 'lucide-react'
 import axios from 'axios'
@@ -8,9 +8,11 @@ const MyNotesRequests = () => {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('ALL')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const outletContext = useOutletContext()
+  const sidebarOpen = outletContext?.sidebarOpen ?? true
+  const setSidebarOpen = outletContext?.setSidebarOpen ?? (() => {})
 
   useEffect(() => {
     fetchRequests()

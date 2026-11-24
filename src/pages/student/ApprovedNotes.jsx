@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { BookOpen, Eye, Search, Menu, X, FileText, CheckCircle2, AlertCircle } from 'lucide-react'
 import axios from 'axios'
@@ -8,11 +8,13 @@ const ApprovedNotes = () => {
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [toast, setToast] = useState(null)
   const navigate = useNavigate()
   const location = useLocation()
   const { logout } = useAuth()
+  const outletContext = useOutletContext()
+  const sidebarOpen = outletContext?.sidebarOpen ?? true
+  const setSidebarOpen = outletContext?.setSidebarOpen ?? (() => {})
 
   useEffect(() => {
     fetchApprovedNotes()

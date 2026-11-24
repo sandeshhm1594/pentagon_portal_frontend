@@ -28,7 +28,7 @@ const TrainerDashboard = () => {
   const [attendance, setAttendance] = useState([])
   const [todayAttendance, setTodayAttendance] = useState([])
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024)
   const [showQRScanner, setShowQRScanner] = useState(false)
   const [showQRCode, setShowQRCode] = useState(false)
   const [cameraActive, setCameraActive] = useState(false)
@@ -311,8 +311,12 @@ const TrainerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? 'w-64' : 'w-16'}`}>
+      <div className={`sidebar ${sidebarOpen ? 'w-64' : 'w-16'} flex flex-col ${sidebarOpen ? 'max-lg:translate-x-0' : 'max-lg:-translate-x-full'}`}>
         <div className="p-6 border-b border-primary-200">
           <div className="flex items-center gap-3">
             <img src={pentagonLogo} alt="Pentagon Space Logo" className="w-10 h-10 object-contain flex-shrink-0" />
@@ -351,8 +355,16 @@ const TrainerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
-        <div className="p-8">
+      <div className={`transition-all duration-300 ml-0 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'}`}>
+        {/* Mobile top bar */}
+        <div className="lg:hidden sticky top-0 z-20 flex items-center gap-3 px-4 py-3 bg-white/90 backdrop-blur border-b border-primary-100">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-xl bg-white shadow border border-primary-200">
+            {sidebarOpen ? <X className="w-5 h-5 text-primary-600" /> : <Menu className="w-5 h-5 text-primary-600" />}
+          </button>
+          <img src={pentagonLogo} alt="Pentagon Space Logo" className="w-8 h-8 object-contain" />
+          <span className="font-bold text-gold-600">PentagonSpace</span>
+        </div>
+        <div className="p-4 sm:p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-heading">Trainer Dashboard</h1>
