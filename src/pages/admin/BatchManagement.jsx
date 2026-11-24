@@ -204,7 +204,7 @@ const BatchManagement = () => {
   }
 
   const generateQRCode = (batchCode) => {
-    window.open(apiFile(`/api/qr/generate/${batchCode}`), '_blank')
+    window.open(apiFile(`/api/qr/generate/batch/${batchCode}`), '_blank')
   }
 
   if (loading) {
