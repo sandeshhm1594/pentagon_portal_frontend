@@ -17,6 +17,7 @@ const StudentDashboard = () => {
   const [student, setStudent] = useState(null)
   const [batches, setBatches] = useState([])
   const [attendance, setAttendance] = useState([])
+  const [batchFilter, setBatchFilter] = useState('')
   const [loading, setLoading] = useState(true)
   const [showQRCode, setShowQRCode] = useState(false)
   const outletContext = useOutletContext()
@@ -68,6 +69,10 @@ const StudentDashboard = () => {
     }
   }
 
+  const filteredAttendance = attendance
+    .filter(a => !batchFilter || String(a.batchId) === batchFilter)
+    .sort((a, b) => new Date(b.attendanceDate) - new Date(a.attendanceDate))
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
   }
@@ -113,7 +118,7 @@ const StudentDashboard = () => {
               <div className="relative flex items-center justify-between">
                 <div>
                   <p className="text-body-text text-sm font-medium">Total Attendance</p>
-                  <p className="text-3xl font-bold text-heading mt-2">{attendance.length}</p>
+                  <p className="text-3xl font-bold text-heading mt-2">{filteredAttendance.length}</p>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-lg shadow-emerald-500/30 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
                   <Calendar className="w-7 h-7" />
@@ -126,7 +131,7 @@ const StudentDashboard = () => {
                 <div>
                   <p className="text-body-text text-sm font-medium">Present Days</p>
                   <p className="text-3xl font-bold text-heading mt-2">
-                    {attendance.filter(a => a.present).length}
+                    {filteredAttendance.filter(a => a.present).length}
                   </p>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 text-white shadow-lg shadow-violet-500/30 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
@@ -189,13 +194,26 @@ const StudentDashboard = () => {
 
           {/* Attendance History */}
           <div className="relative overflow-hidden rounded-2xl bg-white shadow-xl border border-primary-100 p-6">
-            <h2 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-800 mb-4">Attendance History</h2>
-            {attendance.length > 0 ? (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <h2 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-800">Attendance History</h2>
+              <select
+                value={batchFilter}
+                onChange={(e) => setBatchFilter(e.target.value)}
+                className="input-field sm:w-64"
+              >
+                <option value="">All Batches</option>
+                {batches.map((b) => (
+                  <option key={b.batchId} value={b.batchId}>{b.batchCode}</option>
+                ))}
+              </select>
+            </div>
+            {filteredAttendance.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="pd-table w-full min-w-[700px]">
                   <thead>
                     <tr>
                       <th>Date</th>
+                      <th>Batch</th>
                       <th>Check In</th>
                       <th>Check Out</th>
                       <th>Status</th>
@@ -203,9 +221,12 @@ const StudentDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {attendance.map((record) => (
+                    {filteredAttendance.map((record) => {
+                      const batch = batches.find(b => String(b.batchId) === String(record.batchId))
+                      return (
                       <tr key={record.id}>
                         <td className="font-medium text-heading">{new Date(record.attendanceDate).toLocaleString()}</td>
+                        <td>{batch ? batch.batchCode : record.batchId}</td>
                         <td>{record.checkInTime ? new Date(record.checkInTime).toLocaleTimeString() : 'N/A'}</td>
                         <td>{record.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString() : 'N/A'}</td>
                         <td>
@@ -221,7 +242,8 @@ const StudentDashboard = () => {
                           )}
                         </td>
                       </tr>
-                    ))}
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
