@@ -39,6 +39,7 @@ const TrainerDashboard = () => {
   const [endDate, setEndDate] = useState('')
   const [studentSearch, setStudentSearch] = useState('')
   const html5QrCodeRef = useRef(null)
+  const processingRef = useRef(false)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -196,6 +197,8 @@ const TrainerDashboard = () => {
   }
 
   const handleScan = async (qrData) => {
+    if (processingRef.current) return
+    processingRef.current = true
     setScanning(true)
     try {
       const token = localStorage.getItem('token')
@@ -216,6 +219,7 @@ const TrainerDashboard = () => {
       })
       stopCamera()
     } finally {
+      processingRef.current = false
       setScanning(false)
     }
   }
